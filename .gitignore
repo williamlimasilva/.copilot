@@ -13,6 +13,7 @@
 !snippets/
 
 # Manter todos os arquivos e subpastas dentro dos diretórios permitidos
+!README.md
 !skills/**
 !agents/**
 !instructions/**
