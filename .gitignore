@@ -1,0 +1,38 @@
+# .gitignore - Copilot Workspace
+# Mantém apenas: skills, agents, instructions, prompts, snippets e suas subpastas
+
+# Ignorar tudo por padrão
+/*
+
+# Adicionar de volta as pastas e arquivos necessários
+!.gitignore
+!skills/
+!agents/
+!instructions/
+!prompts/
+!snippets/
+
+# Manter todos os arquivos e subpastas dentro dos diretórios permitidos
+!skills/**
+!agents/**
+!instructions/**
+!prompts/**
+!snippets/**
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDEs e editores
+.vscode/
+.idea/
+*.iml
+*.sublime-*
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
