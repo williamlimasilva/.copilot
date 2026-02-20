@@ -142,6 +142,40 @@ See [skills-security-report-2026-02-19.md](skills-security-report-2026-02-19.md)
 - `command-history-state.json` - Command history tracking
 - Session states stored in `session-state/` and `history-session-state/`
 
+### ⚙️ VS Code Integration
+
+Add the following settings to your VS Code `settings.json` (User or Workspace) to allow the editor to automatically recognize and load agents, skills, prompts, and instructions from the folders in this repository:
+
+```json
+{
+    "chat.agent.enabled": true,
+    "chat.agentFilesLocations": {
+        "~/.copilot/agents": true
+    },
+    "chat.agentSkillsLocations": {
+        "~/.copilot/skills": true
+    },
+    "chat.promptFilesLocations": {
+        "~/.copilot/prompts": true
+    },
+    "chat.instructionsFilesLocations": {
+        "~/.copilot/instructions": true
+    },
+    "chat.mcp.access": "all",
+    "chat.mcp.autostart": "onlyNew",
+    "chat.mcp.discovery.enabled": {
+        "claude-desktop": true,
+        "windsurf": true,
+        "cursor-global": true,
+        "cursor-workspace": true
+    },
+    "chat.promptFiles": true,
+    "chat.todoListTool.enabled": true
+}
+```
+
+> Note: adjust paths if the repository is located outside your home directory.
+
 ## 📝 Development Standards
 
 All code generation follows:
