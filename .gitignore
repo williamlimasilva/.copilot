@@ -14,6 +14,7 @@
 
 # Manter todos os arquivos e subpastas dentro dos diretórios permitidos
 !README.md
+!.github/**
 !skills/**
 !agents/**
 !instructions/**
