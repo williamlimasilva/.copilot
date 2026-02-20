@@ -1,0 +1,130 @@
+name: Sync Upstream Directories
+
+on:
+  # Executa 1x por dia às 2h da manhã UTC (23h horário de Brasília)
+  schedule:
+    - cron: "0 2 * * *"
+
+  # Permite execução manual via interface do GitHub
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout destination repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Checkout source repo (sparse)
+        uses: actions/checkout@v4
+        with:
+          repository: github/awesome-copilot
+          sparse-checkout: |
+            prompts
+            skills
+            instructions
+          sparse-checkout-cone-mode: true
+          path: upstream-temp
+
+      - name: Sync directories (additive merge)
+        run: |
+          echo "Starting additive sync..."
+
+          # Função para copiar apenas arquivos novos (não sobrescreve existentes)
+          sync_directory() {
+            local src_dir="$1"
+            local dest_dir="$2"
+            
+            if [ -d "upstream-temp/$src_dir" ]; then
+              echo "Syncing $src_dir..."
+              mkdir -p "$dest_dir"
+              
+              # rsync com --ignore-existing: só copia arquivos que NÃO existem no destino
+              # Preserva estrutura de diretórios e timestamps
+              rsync -av --ignore-existing "upstream-temp/$src_dir/" "$dest_dir/"
+              
+              echo "✓ $src_dir synced"
+            else
+              echo "⚠ Source directory upstream-temp/$src_dir not found, skipping"
+            fi
+          }
+
+          # Sincronizar as três pastas
+          sync_directory "prompts" "prompts"
+          sync_directory "skills" "skills"
+          sync_directory "instructions" "instructions"
+
+          # Limpar diretório temporário
+          rm -rf upstream-temp
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✓ New files detected"
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "✓ No new files to add"
+          fi
+
+      - name: Commit and push if changed
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          # Obter informações do upstream para rastreabilidade
+          UPSTREAM_SHA=$(cd upstream-temp 2>/dev/null && git rev-parse HEAD || echo "unknown")
+
+          # Configurar identidade do bot
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Preparar commit
+          git add prompts/ skills/ instructions/
+
+          # Criar mensagem de commit detalhada
+          cat > commit_msg.txt << EOF
+          chore: sync upstream directories (additive merge)
+
+          Synced from github/awesome-copilot
+          Upstream SHA: ${UPSTREAM_SHA}
+          Sync timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          Directories synced (new files only):
+          - prompts/
+          - skills/
+          - instructions/
+
+          Strategy: Additive merge (no overwrites, no deletions)
+          EOF
+
+          git commit -F commit_msg.txt
+          git push
+
+          echo "✓ Changes committed and pushed"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.changes.outputs.has_changes }}" == "true" ]; then
+            echo "✅ **Status:** New files added and committed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ **Status:** No new files to sync" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Synced directories:**" >> $GITHUB_STEP_SUMMARY
+          echo "- \`prompts/\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`skills/\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`instructions/\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Strategy:** Additive merge (preserves existing files)" >> $GITHUB_STEP_SUMMARY

@@ -1,25 +1,15 @@
 # .gitignore - Copilot Workspace
 # Mantém apenas: skills, agents, instructions, prompts, snippets e suas subpastas
 
-# Ignorar tudo por padrão
-/*
+# Pastas a serem ignoradas
+history-session-state/**
+ide/**
+logs/**
+session-state/**
 
-# Adicionar de volta as pastas e arquivos necessários
-!.gitignore
-!skills/
-!agents/
-!instructions/
-!prompts/
-!snippets/
-
-# Manter todos os arquivos e subpastas dentro dos diretórios permitidos
-!README.md
-!.github/**
-!skills/**
-!agents/**
-!instructions/**
-!prompts/**
-!snippets/**
+# Arquivos a serem ignorados
+command-history-state.json
+config.json
 
 # Sistema operacional
 .DS_Store
