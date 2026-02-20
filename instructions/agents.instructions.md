@@ -27,7 +27,8 @@ name: "Agent Display Name"
 tools: ["read", "edit", "search"]
 model: "Claude Sonnet 4.5"
 target: "vscode"
-infer: true
+user-invokable: true
+disable-model-invocation: false
 ---
 ```
 
