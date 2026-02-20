@@ -11,7 +11,7 @@ tools:
     "edit",
     "search",
     "web",
-    "upstash/context7/*",
+    "io.github.upstash/context7/*",
     "memory",
     "todo",
   ]

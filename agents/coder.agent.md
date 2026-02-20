@@ -1,7 +1,7 @@
 ---
 name: Coder
 description: Writes code following mandatory coding principles.
-model: Claude Opus 4.6 (copilot)
+model: Claude Sonnet 4.5 (copilot)
 tools:
   [
     "vscode",
@@ -12,7 +12,7 @@ tools:
     "search",
     "web",
     "github/*",
-    "upstash/context7/*",
+    "io.github.upstash/context7/*",
     "memory",
     "todo",
   ]
