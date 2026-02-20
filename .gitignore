@@ -6,6 +6,7 @@ history-session-state/**
 ide/**
 logs/**
 session-state/**
+pkg/**
 
 # Arquivos a serem ignorados
 command-history-state.json
