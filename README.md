@@ -142,6 +142,37 @@ See [skills-security-report-2026-02-19.md](skills-security-report-2026-02-19.md)
 - `command-history-state.json` - Command history tracking
 - Session states stored in `session-state/` and `history-session-state/`
 
+## 🔄 Automatic Sync with Upstream
+
+This repository includes a GitHub Actions workflow that automatically syncs new content from the upstream [github/awesome-copilot](https://github.com/github/awesome-copilot) repository.
+
+### How It Works
+
+The workflow runs:
+- **Scheduled**: Daily at 2 AM UTC (11 PM Brasília time)
+- **Manual**: Can be triggered manually via GitHub Actions interface
+
+The sync uses an **additive merge strategy**, which means:
+- ✅ New files from upstream are added
+- ✅ Your existing files are never overwritten
+- ✅ Your custom modifications are preserved
+- ✅ Deletions from upstream don't affect your local files
+
+### Manual Trigger
+
+To manually sync with upstream:
+
+1. Go to the [Actions tab](../../actions) in your repository
+2. Click on "Sync Upstream Directories" workflow
+3. Click "Run workflow" button
+4. Select the branch (usually `main`)
+5. Click "Run workflow"
+
+The workflow will sync the following directories:
+- `prompts/` - New prompt templates
+- `skills/` - New skill modules  
+- `instructions/` - New coding instructions
+
 ### ⚙️ VS Code Integration
 
 Add the following settings to your VS Code `settings.json` (User or Workspace) to allow the editor to automatically recognize and load agents, skills, prompts, and instructions from the folders in this repository:

@@ -37,6 +37,11 @@ jobs:
         run: |
           echo "Starting additive sync..."
 
+          # Capturar SHA do upstream antes de limpar o diretório temporário
+          UPSTREAM_SHA=$(cd upstream-temp 2>/dev/null && git rev-parse HEAD || echo "unknown")
+          echo "UPSTREAM_SHA=$UPSTREAM_SHA" >> $GITHUB_ENV
+          echo "Upstream SHA: $UPSTREAM_SHA"
+
           # Função para copiar apenas arquivos novos (não sobrescreve existentes)
           sync_directory() {
             local src_dir="$1"
@@ -78,8 +83,8 @@ jobs:
       - name: Commit and push if changed
         if: steps.changes.outputs.has_changes == 'true'
         run: |
-          # Obter informações do upstream para rastreabilidade
-          UPSTREAM_SHA=$(cd upstream-temp 2>/dev/null && git rev-parse HEAD || echo "unknown")
+          # Usar SHA capturado anteriormente (disponível via $GITHUB_ENV)
+          UPSTREAM_SHA="${UPSTREAM_SHA:-unknown}"
 
           # Configurar identidade do bot
           git config user.name "github-actions[bot]"
